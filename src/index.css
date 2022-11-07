@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.landing {
+    
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.footer-bg {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.sortbox:checked ~ #sortboxmenu {
+    opacity: 1;
+}
