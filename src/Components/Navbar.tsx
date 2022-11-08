@@ -17,7 +17,7 @@ const Navbar = () => {
   }
   useEffect(() => {
     setUser(localStorage.userInfo ? JSON.parse( localStorage.userInfo):null)
-  }, [])
+  }, [localStorage.userInfo])
  
   return (
     <div>

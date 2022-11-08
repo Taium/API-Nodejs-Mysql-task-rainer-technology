@@ -24,6 +24,7 @@ const Admin = () => {
   const [limit, setLimit] = useState<number>(10);
   const [offset, setOffset] = useState<number>(0);
   const [toatlPost, setTotalPost] = useState<number>(0);
+  const [appointmentID, setAppointmentID] = useState<number>();
 
   const disabledDays = [
     new Date(2022, 10, 10),
@@ -88,11 +89,11 @@ const Admin = () => {
   const fetchAppoint = async (limit: number, offset: number) => {
     await axios
       .get(`${baseUrl}/allappointment`, {
-        params: { limit: limit, offset: offset },
+        params: { limit: limit, offset: offset , appointmentID: appointmentID},
       })
       .then((response) => {
         console.log(response);
-        setAppointments(response.data.data);
+        setAppointments(response.data.data ?? []);
         setPageCount(Math.ceil(response.data.totalCount / limit));
         setTotalPost(response.data.totalCount);
         if (response.data.data.message) {
@@ -353,7 +354,7 @@ const Admin = () => {
                     </thead>
 
                     <tbody className="bg-white">
-                      {appointments &&
+                      {appointments?.length==0 ? <h1>No Data Found</h1> :
                         appointments?.map((cat: any, index: number) => (
                           <tr>
                             <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">

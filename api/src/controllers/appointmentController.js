@@ -20,6 +20,45 @@ const findAll = async (req, res) => {
 const findAllitems = async (req, res) => {
   const limit = parseInt(req.query.limit) ?? 10;
   const offset = parseInt(req.query.offset) ?? 0;
+  var patientName = req.query.patientName;
+  var contactNo = req.query.contactNo;
+  var status = req.query.status;
+  var appointmentID = req.query.appointmentID;
+
+  var query = "";
+
+  if (patientName) {
+    query =
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      limit +
+      " OFFSET " +
+      offset +
+      " where patient.name=" +
+      patientName;
+  } else if (contactNo) {
+    query =
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      limit +
+      " OFFSET " +
+      offset +
+      " where patient.contact_no=" +
+      contactNo;
+  }else if (status) {
+    query =
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      limit +
+      " OFFSET " +
+      offset +
+      " where appointment.status=" +
+      status;
+  }else if (appointmentID) {
+    query =
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) where appointment.id=" +
+      appointmentID + " ORDER BY  appointment.id DESC limit " +
+      limit +
+      " OFFSET " +
+      offset;
+  }
 
   var quecount = dbConn.query(
     "Select count(*) as TotalCount from appointment",
@@ -27,10 +66,9 @@ const findAllitems = async (req, res) => {
       if (error) {
         return error;
       } else {
-        dbConn.query(
-          " SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.time as time,doctor.name as doctor_name, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit ? OFFSET ?",
-          [limit, offset],
-          function (error, results, fields) {
+        console.log("query",query)
+        if (patientName || appointmentID || status || contactNo) {
+          dbConn.query(query, function (error, results, fields) {
             if (error) throw error;
 
             // check has data or not
@@ -38,10 +76,36 @@ const findAllitems = async (req, res) => {
             if (results === undefined || results.length == 0)
               message = "appointment table is empty";
             else message = "Successfully retrived all appointment";
+            console.log("results",results)
 
-            return res.send({"totalCount": countResults[0]?.TotalCount, data: results });
-          }
-        );
+            return res.send({
+              totalCount: countResults[0]?.TotalCount,
+              data: results,
+            });
+          });
+        } else {
+          dbConn.query(
+            "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+              limit +
+              " OFFSET " +
+              offset,
+            // [limit, offset],
+            function (error, results, fields) {
+              if (error) throw error;
+
+              // check has data or not
+              let message = "";
+              if (results === undefined || results.length == 0)
+                message = "appointment table is empty";
+              else message = "Successfully retrived all appointment";
+
+              return res.send({
+                totalCount: countResults[0]?.TotalCount,
+                data: results,
+              });
+            }
+          );
+        }
       }
     }
   );

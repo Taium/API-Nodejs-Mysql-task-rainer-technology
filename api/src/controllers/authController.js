@@ -4,7 +4,7 @@ const dbConn = require('../database');
 
 const login = async (req, res) => {
     const { email, password } = req.body
-    dbConn.query("SELECT `id`, `name`, `email`, `created_at`, `password`  FROM `patient` WHERE `email` = ? AND `password`=?", [email, password], function (error, results, fields) {
+    dbConn.query("SELECT `id`, `name`, `email`,`role`, `created_at`, `password`  FROM `patient` WHERE `email` = ? AND `password`=?", [email, password], function (error, results, fields) {
         if (error) throw error;
 
         // check has data or not
