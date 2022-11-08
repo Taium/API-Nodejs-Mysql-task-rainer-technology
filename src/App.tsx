@@ -10,6 +10,7 @@ import Signup from './pages/Signup';
 import PrivateRoute from './Components/PrivateRoute';
 import Appointment from './pages/Appointment';
 import ShowAppointments from 'pages/ShowAppointments';
+import Admin from 'pages/Admin';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                     <Route index element={<Home />} />
                     <Route path="/appointment" element={<Appointment />} />
                     <Route path="/appointmentlist" element={<ShowAppointments />} />
+                    <Route path="/admin" element={<Admin />} />
 
                 </Route>
                     <Route path="/login" element={<Login />} />

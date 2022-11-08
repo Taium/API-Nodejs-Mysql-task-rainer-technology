@@ -83,7 +83,9 @@ const ShowAppointments = () => {
         .then((response) => {
           console.log(response);
           setAppointments(response.data.data);
-          alert(response.data.message);
+          if (response.data.data.message){
+          alert(response.data.data.message);
+        }
         });
         // await axios.get(`http://localhost:8000/api/singleappointment`,
         // {patient_id: patient_id}).then((response) => {
