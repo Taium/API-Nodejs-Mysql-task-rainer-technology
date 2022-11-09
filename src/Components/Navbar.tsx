@@ -21,89 +21,16 @@ const Navbar = () => {
  
   return (
     <div>
-      {/* <header className="py-5 shadow">
-        <div className="navbar bg-base-100 container mx-auto md:px-20">
-          <div className="navbar-start flex-1">
-            <div className="dropdown">
-              <label className="btn btn-ghost lg:hidden">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h8m-8 6h16"
-                  />
-                </svg>
-              </label>
-              <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"></ul>
-            </div>
-            <Link to="/" className="font-semibold text-2xl">
-              Doctors Portal
-            </Link>
-          </div>
-
-          <div className="flex-none gap-2 ">
-            <div className="hidden lg:flex">
-              <ul className="flex gap-5 p-0 mr-5">
-                <li>
-                  <NavLink className="px-3 py-2" to="appointment">
-                    Appointments
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink className="px-3 py-2" to="/login">
-                    Login
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
-
-            <div className="dropdown dropdown-end ">
-              <label className="btn btn-ghost btn-circle avatar">
-                <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img className="" alt="" />
-                </div>
-              </label>
-              <ul className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
-                <li>
-                  <NavLink to="/profile" className="justify-between">
-                    Profile
-                    <span className="badge">taium</span>
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard">Dashboard</NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    onClick={() => {
-                      localStorage.removeItem("accessToken");
-                    }}
-                    to="/login"
-                  >
-                    Logout
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </header> */}
-     
+      
 
 <nav className="container flex justify-around py-8 mx-auto bg-white">
   <div className="flex items-center">
     <h3 className="text-2xl font-medium text-blue-500">LOGO</h3>
   </div>
   {/* <!-- left header section --> */}
-  <div className="items-center hidden space-x-8 lg:flex">
+  {
+  localStorage.role && localStorage.role == 0 ?
+  (<div className="items-center hidden space-x-8 lg:flex">
   <NavLink className="px-3 py-2" to="/">
   <a >Home</a>
                   </NavLink>
@@ -120,7 +47,8 @@ const Navbar = () => {
       <NavLink className="px-3 py-2" to="/login">
   <a href="">Login</a>
                   </NavLink>}
-  </div>
+  </div>)
+   : null }
   {/* <!-- right header section --> */}
   <div className="flex items-center space-x-2">
     <a href="#">
@@ -199,6 +127,10 @@ const Navbar = () => {
                 { tbutton &&
                   <div className="absolute right-0 z-10 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-md shadow-lg">
                     <div className="p-2">
+                    
+  {localStorage.role && localStorage.role == 0 ?
+  (
+    <div>
                     <NavLink  to="/appointmentlist">
                         <a
                             
@@ -213,6 +145,8 @@ const Navbar = () => {
                         >
                            Edit profile
                         </a>
+                        </div>
+  ): null}
                         <a
                             
                             className="block px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700"
