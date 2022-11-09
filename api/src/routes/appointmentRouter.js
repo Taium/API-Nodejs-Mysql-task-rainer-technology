@@ -10,6 +10,7 @@ router.get('/appointment', appointmentController.findAll )
 router.get('/allappointment', appointmentController.findAllitems )
 router.post('/addappointment', appointmentController.store )
 router.post('/singleappointment', appointmentController.findSingle )
+router.get('/singlepatient', appointmentController.findSinglepatient )
 router.post('/updateappointment', appointmentController.updateTimeDate )
 
 

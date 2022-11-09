@@ -1,0 +1,29 @@
+version: "v2.12.1"
+
+services: 
+  app:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    ports: 
+      - 3000:3000
+    volumes: 
+      - ./api/:/app
+      
+    depends_on: 
+      - mariadb
+  
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      - MYSQL_DATABASE=appointment_management
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=
+      - MYSQL_ROOT_PASSWORD:secret
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3305:3306
+
+    

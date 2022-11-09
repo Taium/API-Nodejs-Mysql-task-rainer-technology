@@ -5,12 +5,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
 const Home = () => {
-  
-  return (
-    <div>
-      This is Home Page
-          </div>
-  );
+  return <div>This is Home Page</div>;
 };
 
 export default Home;

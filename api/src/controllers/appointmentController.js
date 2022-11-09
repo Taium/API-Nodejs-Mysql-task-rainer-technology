@@ -21,40 +21,41 @@ const findAllitems = async (req, res) => {
   const limit = parseInt(req.query.limit) ?? 10;
   const offset = parseInt(req.query.offset) ?? 0;
   var patientName = req.query.patientName;
-  var contactNo = req.query.contactNo;
-  var status = req.query.status;
-  var appointmentID = req.query.appointmentID;
+  var contact = req.query.contact;
+  var status = parseInt(req.query.status);
+  var appointmentID = parseInt(req.query.appointmentID);
 
   var query = "";
 
   if (patientName) {
     query =
-      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) where patient.name=" +
+      `"${patientName}"` +
+      " ORDER BY  appointment.id DESC limit " +
       limit +
       " OFFSET " +
-      offset +
-      " where patient.name=" +
-      patientName;
-  } else if (contactNo) {
+      offset;
+  } else if (contact) {
     query =
-      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id)  where patient.contact_no=" +
+      contact +
+      " ORDER BY  appointment.id DESC limit " +
       limit +
       " OFFSET " +
-      offset +
-      " where patient.contact_no=" +
-      contactNo;
-  }else if (status) {
+      offset;
+  } else if (status) {
     query =
-      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) ORDER BY  appointment.id DESC limit " +
+      "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) where appointment.status=" +
+      status +
+      " ORDER BY  appointment.id DESC limit " +
       limit +
       " OFFSET " +
-      offset +
-      " where appointment.status=" +
-      status;
-  }else if (appointmentID) {
+      offset;
+  } else if (appointmentID) {
     query =
       "SELECT  appointment.status as status ,appointment.id as appointment_id,appointment.date as date,appointment.patient_id as patient_id,appointment.time as time,doctor.name as doctor_name,patient.contact_no as contact_no, patient.name as patient_name FROM ((appointment INNER JOIN doctor ON appointment.doctor_id=doctor.id) INNER JOIN patient ON appointment.patient_id=patient.id) where appointment.id=" +
-      appointmentID + " ORDER BY  appointment.id DESC limit " +
+      appointmentID +
+      " ORDER BY  appointment.id DESC limit " +
       limit +
       " OFFSET " +
       offset;
@@ -66,8 +67,8 @@ const findAllitems = async (req, res) => {
       if (error) {
         return error;
       } else {
-        console.log("query",query)
-        if (patientName || appointmentID || status || contactNo) {
+        console.log("query", query);
+        if (patientName || appointmentID || status || contact) {
           dbConn.query(query, function (error, results, fields) {
             if (error) throw error;
 
@@ -76,7 +77,7 @@ const findAllitems = async (req, res) => {
             if (results === undefined || results.length == 0)
               message = "appointment table is empty";
             else message = "Successfully retrived all appointment";
-            console.log("results",results)
+            console.log("results", results);
 
             return res.send({
               totalCount: countResults[0]?.TotalCount,
@@ -126,6 +127,25 @@ const findSingle = async (req, res) => {
       if (results === undefined || results.length == 0)
         message = " no appointment";
       else message = "Successfully retrived all appointment";
+
+      return res.send({ data: results });
+    }
+  );
+};
+const findSinglepatient = async (req, res) => {
+  const { patient_id } = req.query;
+
+  // dbConn.query('SELECT * FROM follow where userID=?',userID, function (error, results, fields) {
+  dbConn.query(
+    " SELECT * from patient where id=?",
+    [patient_id],
+    function (error, results, fields) {
+      if (error) throw error;
+
+      // check has data or not
+      let message = "";
+      if (results === undefined || results.length == 0) message = " no patient";
+      else message = "Successfully retrived all patient";
 
       return res.send({ data: results });
     }
@@ -192,66 +212,6 @@ const store = async (req, res) => {
   );
 };
 
-const findAllFollowing = async (req, res) => {
-  let userID = req.params.userID;
-
-  // dbConn.query('SELECT * FROM follow where followUserID=?',userID, function (error, results, fields) {
-  dbConn.query(
-    " SELECT follow.id, user.userName , user.name FROM follow INNER JOIN user ON follow.userID = user.id where follow.followUserID=?",
-    userID,
-    function (error, results, fields) {
-      if (error) throw error;
-
-      // check has data or not
-      let message = "";
-      if (results === undefined || results.length == 0)
-        message = "follow table is empty";
-      else message = "Successfully retrived all follow";
-
-      return res.send({ data: results });
-    }
-  );
-};
-
-const findMeFollow = async (req, res) => {
-  const { followUserID, userID } = req.query;
-
-  dbConn.query(
-    "SELECT * FROM follow where followUserID=? AND  userID=?",
-    [followUserID, userID],
-    function (error, results, fields) {
-      if (error) throw error;
-
-      // check has data or not
-      let message = "";
-      if (results === undefined || results.length == 0)
-        message = "Like table data not found";
-      else message = "Successfully retrived  follow";
-
-      return res.send({ data: results });
-    }
-  );
-};
-
-// const store = async (req, res) => {
-//     // destructuring
-//     console.log('req.body', req.body)
-
-//     const { userID, followUserID, myfollowingCount, userFollowerCount } = req.body
-//     // insert to db
-//     dbConn.query("INSERT INTO follow (userID, followUserID ) VALUES (?,?)", [userID, followUserID], function (error, results, fields) {
-//         if (error) {
-//             console.log(error);
-//         }
-//         // throw error;
-
-//         followerCount(followUserID, userFollowerCount + 1)
-//         followingCount(userID, myfollowingCount + 1)
-//         return res.send({ error: false, data: results, message: 'follow successfully added' });
-//     });
-
-// }
-
 const destroy = async (req, res) => {
   let id = req.params.id;
   const { userID, followUserID, myfollowingCount, userFollowerCount } =
@@ -265,50 +225,9 @@ const destroy = async (req, res) => {
     if (results.affectedRows == 0) {
       message = "follow not found";
     } else {
-      followerCount(followUserID, userFollowerCount - 1);
-      followingCount(userID, myfollowingCount - 1);
-      message = "follow successfully Delete";
     }
     return res.send({ data: results, message: message });
   });
-};
-
-const followerCount = (id, followerCount) => {
-  dbConn.query(
-    "UPDATE user set followerCount=? WHERE id=?",
-    [followerCount, id],
-    function (err, results) {
-      if (err) {
-        throw err;
-      }
-      let message = "";
-      if (results.changedRows == 0) {
-        message = "Update Failed";
-      } else {
-        message = "successfully updatedata";
-      }
-      console.log(message);
-    }
-  );
-};
-
-const followingCount = (id, followingCount) => {
-  dbConn.query(
-    "UPDATE user set followingCount=? WHERE id=?",
-    [followingCount, id],
-    function (err, results) {
-      if (err) {
-        throw err;
-      }
-      let message = "";
-      if (results.changedRows == 0) {
-        message = "Update Failed";
-      } else {
-        message = "successfully updatedata";
-      }
-      console.log(message);
-    }
-  );
 };
 
 module.exports = {
@@ -318,6 +237,5 @@ module.exports = {
   updateTimeDate,
   store,
   destroy,
-  findAllFollowing,
-  findMeFollow,
+  findSinglepatient,
 };

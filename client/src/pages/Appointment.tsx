@@ -55,7 +55,7 @@ const Appointment = () => {
   console.log(patient_id);
 
   const fetchDoctor = async () => {
-    await axios.get(`http://localhost:8000/api/doctor`).then((response) => {
+    await axios.get(`${baseUrl}/doctor`).then((response) => {
       console.log("res", response);
       setData(response.data.data);
     });
@@ -68,7 +68,7 @@ const Appointment = () => {
 
   // const todayDate = new Date()
   const handleDate = (e: any) => {
-    setSelected(e)
+    setSelected(e);
     console.log(`${e.getDate()}-${e.getMonth()}-${e.getFullYear()}`);
     setDate(`${e.getDate()}-${e.getMonth()}-${e.getFullYear()}`);
   };
@@ -99,7 +99,7 @@ const Appointment = () => {
                   </h4>
                   <h6>{items.category}</h6>
                   <p>{items.hos_name}</p>
-                  
+
                   <button
                     className="px-4 py-2 text-sm text-blue-100 bg-blue-500 rounded shadow"
                     onClick={() => {

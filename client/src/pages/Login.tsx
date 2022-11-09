@@ -35,7 +35,7 @@ const Login = () => {
       console.log(json.email);
       if (resValue.data.role == 1) {
         navigate("/admin");
-      }else{
+      } else {
         navigate("/");
       }
     } else {
